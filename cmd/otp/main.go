@@ -40,13 +40,23 @@ func main() {
 	}
 	botRegex := regexp.MustCompile(fmt.Sprintf("^.*(%s).*$", strings.Join(bots, "|")))
 
+	expire := "15"
+	if givenExpiry, ok := os.LookupEnv("OTP_DEFAULT_EXPIRE"); ok {
+		expire = givenExpire
+	}
+
+	views := "2"
+	if givenViews, ok := os.LookupEnv("OTP_DEFAULT_VIEWS"); ok {
+		views = givenViews
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w,
 			layout,
 			`<form action='/new' method='POST'>
 			   <textarea cols=40 rows=20 name='content'></textarea>
-			   Expire in minutes: <input type='text' name='expire' value='15' /><br />
-			   Views before expiration: <input type='text' name='views' value='2' /><br />
+			   Expire in minutes: <input type='text' name='expire' value='`+expire+`' /><br />
+			   Views before expiration: <input type='text' name='views' value='`+views+`' /><br />
 			   <br />
 			   <input type='submit' style='float: right;' />
 			 </form>`,
